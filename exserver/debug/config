@@ -1,0 +1,3 @@
+alias -a ir = info registers
+set listsize 100
+

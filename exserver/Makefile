@@ -2,6 +2,7 @@
 vpath %.cpp src
 
 RM := rm -f
+RMDIR := rm -rf
 
 CXX ?= g++
 CXXFLAGS := -std=c++17 -Wall -Wextra -Wpedantic -Weffc++ -g3 -Og -ggdb
@@ -27,6 +28,14 @@ $(TARGET): $(OBJS)
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c -o $@ $^
 
+.PHONY: docs
+docs:
+	doxygen docs/Doxyfile
+
 .PHONY: clean
 clean:
 	$(RM) $(OBJS) $(TARGET)
+
+.PHONY: clean-docs
+clean-docs:
+	$(RMDIR) docs/html docs/latex

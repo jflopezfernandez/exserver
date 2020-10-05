@@ -34,5 +34,9 @@
 *.exe
 *.out
 *.app
-exserver
+exserver/exserver
+
+# Ignore Doxygen-Generated Documentation
+exserver/docs/html/
+exserver/docs/latex/
 
