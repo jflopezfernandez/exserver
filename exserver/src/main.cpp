@@ -106,17 +106,25 @@ int main(int argc, const char *argv[])
     Options::options_description server_options("Server Options");
     server_options.add_options()
         ("port", Options::value<std::string>(&Configuration::ServerPort)->default_value(Default::ServerPort), "Server listener port")
+        ("threads", Options::value<size_t>()->default_value(1), "Number of threads per process to spawn")
+    ;
+
+    Options::options_description debugging_options("Debugging Options");
+    debugging_options.add_options()
+        ("debug", "Enable debug mode assertions and logging")
     ;
 
     Options::options_description generic_options("Generic Options");
     generic_options.add_options()
         ("help", "Display this help menu and exit")
         ("version", "Display server version information and exit")
+        ("verbose", "Output detailed info during execution")
     ;
 
     Options::options_description options;
     options
         .add(server_options)
+        .add(debugging_options)
         .add(generic_options);
 
     Options::variables_map vm;
@@ -219,6 +227,16 @@ int main(int argc, const char *argv[])
 
                     std::clog << request << "\n";
 
+                    char* request_type = strtok(request, " ");
+
+                    if (request_type == NULL) {
+                        // something went terribly wrong
+                        std::cerr << "Failed to get HTTP request method" << "\n";
+                        return EXIT_FAILURE;
+                    }
+
+                    std::clog << "HTTP Request Type: " << request_type << "\n";
+
                     char page_buffer[4096] = { 0 };
                     char* page_buffer_iterator = page_buffer;
 
@@ -235,7 +253,7 @@ int main(int argc, const char *argv[])
                     const char* response = 
                         "HTTP/1.1 200 OK\r\n"
                         "Connection: close\r\n"
-                        "Content-Type: text/html\r\n"
+                        "Content-Type: text/html; charset=UTF-8\r\n"
                         "\r\n";/*
                         "<!DOCTYPE html>\n"
                         "<html lang='en-US'>\n"
